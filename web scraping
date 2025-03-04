@@ -1,1 +1,9 @@
+import requests
 
+def get_greenhouse_jobs(company_id):
+    url = f"https://boards-api.greenhouse.io/v1/boards/{company_id}/jobs"
+    response = requests.get(url)
+    return response.json() if response.status_code == 200 else None
+
+jobs = get_greenhouse_jobs("palantir")
+print(jobs)
