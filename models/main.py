@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # Load dataset 
-from reusable_code.load_huggingface_dataset import load_huggingface_dataset
+from utils.huggingface_loader import load_huggingface_dataset
 telco = load_huggingface_dataset("aai510-group1/telco-customer-churn")
 
 # Inspect data
