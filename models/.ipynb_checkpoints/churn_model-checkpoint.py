@@ -97,17 +97,20 @@ class ChurnPredictionModel:
             encoded_df = pd.DataFrame(
                 transformed,
                 columns=encoder.get_feature_names_out([var]),
-                index=self.data.index)
+                index=self.data.index
+            )
             self.encoders[var] = encoder
             encoded_variables = pd.concat([encoded_variables, encoded_df], axis=1)
 
         self.X1 = pd.concat(
             [self.X1.drop(columns=variables_to_encode), encoded_variables],
-            axis=1).astype('float64')
+            axis=1
+        ).astype('float64')
         
         self.X2 = pd.concat(
             [self.X2.drop(columns=variables_to_encode), encoded_variables],
-            axis=1 ).astype('float64')
+            axis=1
+        ).astype('float64')
 
     def split_data(self) -> None:
         """Split the data into training and test sets.
@@ -700,114 +703,6 @@ class ChurnPredictionModel:
         plt.tight_layout()
         plt.show()
 
-    def predict(self, data: pd.DataFrame) -> np.ndarray:
-        """Make churn predictions for new data.
-        
-        Args:
-            data (pd.DataFrame): Input data containing customer features.
-            
-        Returns:
-            np.ndarray: Array of predictions (0 for no churn, 1 for churn).
-        """
-        # Prepare the input data
-        X = self._prepare_prediction_data(data)
-        
-        # Use the Logistic Regression model with satisfaction score for prediction
-        return self.models_with_score["Logistic Regression"].predict(X)
-
-    def predict_proba(self, data: pd.DataFrame) -> np.ndarray:
-        """Get churn probabilities for new data.
-        
-        Args:
-            data (pd.DataFrame): Input data containing customer features.
-            
-        Returns:
-            np.ndarray: Array of probability predictions for each class.
-        """
-        # Prepare the input data
-        X = self._prepare_prediction_data(data)
-        
-        # Use the Logistic Regression model with satisfaction score for prediction
-        return self.models_with_score["Logistic Regression"].predict_proba(X)
-
-    def get_feature_importance(self, data: pd.DataFrame) -> dict:
-        """Get feature importance for a prediction.
-        
-        Args:
-            data (pd.DataFrame): Input data containing customer features.
-            
-        Returns:
-            dict: Dictionary mapping feature names to their importance scores.
-        """
-        # Prepare the input data
-        X = self._prepare_prediction_data(data)
-        
-        # Get feature importance from the Logistic Regression model
-        model = self.models_with_score["Logistic Regression"]
-        importance = pd.DataFrame({
-            'Feature': X.columns,
-            'Coefficient': model.coef_[0]
-        })
-        importance['Abs_Coefficient'] = importance['Coefficient'].abs()
-        importance = importance.sort_values('Abs_Coefficient', ascending=False)
-        
-        # Convert to dictionary with normalized importance scores
-        total_importance = importance['Abs_Coefficient'].sum()
-        return dict(zip(importance['Feature'], importance['Abs_Coefficient'] / total_importance))
-
-    def _prepare_prediction_data(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Prepare input data for prediction.
-        
-        Args:
-            data (pd.DataFrame): Raw input data.
-            
-        Returns:
-            pd.DataFrame: Processed data ready for prediction.
-        """
-        # Create a copy of the input data
-        X = data.copy()
-        
-        # Add missing columns with default values
-        for feature in self.product_features_w_score:
-            if feature not in X.columns:
-                if feature == 'Satisfaction Score':
-                    X[feature] = 3  # Default middle value
-                elif feature in ['Contract', 'Internet Type', 'Offer']:
-                    X[feature] = X[feature].mode()[0] if feature in X.columns else X[feature].iloc[0]
-                else:
-                    X[feature] = 0  # Default for binary features
-        
-        # Separate categorical and numerical columns
-        categorical_cols = ['Contract', 'Internet Type', 'Offer']
-        numerical_cols = [col for col in X.columns if col not in categorical_cols]
-        
-        # Encode categorical variables
-        encoded_variables = pd.DataFrame(index=X.index)
-        for var in categorical_cols:
-            if var in X.columns:
-                transformed = self.encoders[var].transform(X[[var]])
-                encoded_df = pd.DataFrame(
-                    transformed,
-                    columns=self.encoders[var].get_feature_names_out([var]),
-                    index=X.index
-                )
-                encoded_variables = pd.concat([encoded_variables, encoded_df], axis=1)
-        
-        # Convert numerical columns to float
-        X_numerical = X[numerical_cols].astype('float64')
-        
-        # Combine numerical and encoded categorical features
-        X = pd.concat([X_numerical, encoded_variables], axis=1)
-        
-        # Scale the data
-        X = pd.DataFrame(
-            self.scaler_X1.transform(X),
-            columns=X.columns,
-            index=X.index
-        )
-        
-        return X
-
 
 def main() -> None:
     """Main function to demonstrate the usage of ChurnPredictionModel.
@@ -843,12 +738,8 @@ def main() -> None:
     # Perform Random Forest analysis
     model.random_forest_analysis()
     
-    # Perform hyperparameter tuning
-    model.hyperparameter_tuning()
+# Hyperparameter Tuning
+model.hyperparameter_tuning()
     
-    # Calculate churn risk scores
-    model.churn_risk_scoring()
-
-
-if __name__ == "__main__":
-    main()
+# Churn Risk Scoring
+model.churn_risk_scoring()

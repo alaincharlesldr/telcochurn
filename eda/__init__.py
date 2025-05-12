@@ -5,11 +5,10 @@ in the telecommunications industry.
 
 Main Features:
 - Data loading and preprocessing
+- Feature engineering
 - Exploratory data analysis
-- Churn rate visualization
 - Correlation analysis
-- Revenue analysis
-- Customer behavior analysis
+- Data visualization
 
 Example usage:
 
@@ -26,6 +25,6 @@ Example usage:
     analyzer.plot_recent_vs_established_users()
 """
 
-from eda.data_analyzer import DataAnalyzer
+from .data_analyzer import DataAnalyzer
 
 __all__ = ['DataAnalyzer']
