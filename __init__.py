@@ -26,7 +26,7 @@ Example usage:
     model.churn_risk_scoring()
 """
 
-from .eda import DataAnalyzer
+from eda.data_analyzer import DataAnalyzer
 from models.churn_model import ChurnPredictionModel
 
 __all__ = ['DataAnalyzer', 'ChurnPredictionModel']
