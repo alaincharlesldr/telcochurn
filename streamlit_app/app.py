@@ -799,12 +799,15 @@ def show_about():
             max-width: 300px;
             margin: 0 auto;
             display: block;
+            object-fit: cover;
+            aspect-ratio: 1;
         }
         </style>
         """, unsafe_allow_html=True)
         
+        # Use the image from assets directory with HTML/CSS for rounded styling
         st.markdown(
-            f'<img src="data:image/jpeg;base64,{base64.b64encode(open("/Users/alain-charleslaurianodorego/Desktop/photo linkedin alain.jpg", "rb").read()).decode()}" class="profile-img">',
+            f'<img src="data:image/jpeg;base64,{base64.b64encode(open("streamlit_app/assets/profile.jpg", "rb").read()).decode()}" class="profile-img">',
             unsafe_allow_html=True
         )
     
